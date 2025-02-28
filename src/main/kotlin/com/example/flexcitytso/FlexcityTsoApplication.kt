@@ -1,4 +1,4 @@
-package com.example.flexictytso
+package com.example.flexcitytso
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,11 +1,10 @@
-package com.example.flexictytso.repository
+package com.example.flexcitytso.repository
 
-import com.example.flexictytso.model.Asset
-import org.springframework.data.repository.Repository
+import com.example.flexcitytso.model.Asset
+import org.springframework.data.repository.CrudRepository
 import java.time.DayOfWeek
 
-interface AssetRepository : Repository<Asset, String> {
-    fun findAssetsByAvailabilitiesContainingAndVolumeGreaterThanEqual(
-        availabilities: List<DayOfWeek>, volume: Int
-    ): Iterable<Asset>
+interface AssetRepository : CrudRepository<Asset, String> {
+
+    fun findAssetByAvailabilitiesContaining(availabilities: List<DayOfWeek>): Collection<Asset>
 }

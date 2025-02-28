@@ -1,19 +1,18 @@
-package com.example.flexictytso.controller
+package com.example.flexcitytso.controller
 
-import com.example.flexictytso.model.Asset
-import com.example.flexictytso.service.ActivationService
-import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
+import com.example.flexcitytso.dto.ActivationRequestDto
+import com.example.flexcitytso.service.ActivationService
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
-@Controller
-@RequestMapping("api/v1/transmissionSystemOperator")
+@RestController
+@RequestMapping("/api/v1/transmissionSystemOperator")
 class TsoController(private val activationService: ActivationService) {
 
-    @GetMapping("/activation")
-    fun activation(@RequestParam date: LocalDate, @RequestParam volume: Int): Iterable<Asset> {
+    @RequestMapping(path = ["/activation"], produces = ["application/json"], name = "activationV1")
+    fun activation(@RequestParam date: LocalDate, @RequestParam volume: Int): ActivationRequestDto {
         return activationService.activate(date, volume)
     }
 }

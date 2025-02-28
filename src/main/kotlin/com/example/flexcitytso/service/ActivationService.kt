@@ -1,30 +1,29 @@
 package com.example.flexcitytso.service
 
+import com.example.flexcitytso.dto.ActivationRequestDto
+import com.example.flexcitytso.dto.toDto
 import com.example.flexcitytso.exception.InsufficientAssetsException
 import com.example.flexcitytso.model.Asset
 import com.example.flexcitytso.repository.AssetRepository
 import org.springframework.stereotype.Service
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.util.logging.Logger
 
 @Service("recursiveActivationService")
-class RecursiveActivationService(private val assetRepository: AssetRepository) : ActivationService {
-    companion object {
-        val LOG: Logger = Logger.getLogger(RecursiveActivationService::class.java.name)
-    }
+class ActivationService(private val assetRepository: AssetRepository) {
 
-    override fun activate(date: LocalDate, volume: Int): Collection<Asset> {
+    fun activate(date: LocalDate, volume: Int): ActivationRequestDto {
         val dayOfWeek: ArrayList<DayOfWeek> = arrayListOf(date.dayOfWeek)
         val dayFilteredAssets = assetRepository.findAssetByAvailabilitiesContaining(dayOfWeek)
-        return filter(dayFilteredAssets, volume)
-
+        val solution = findSolution(dayFilteredAssets, volume)
+        if (solution.isEmpty()) throw InsufficientAssetsException() else return solution.toDto()
     }
 
-    fun filter(assets: Collection<Asset>, volume: Int): Collection<Asset> {
-        if (assets.isEmpty()) {
-            throw InsufficientAssetsException()
-        }
+    /**
+     * Find the best solution for the given volume
+     * This might be terrible in terms of performance
+     */
+    fun findSolution(assets: Collection<Asset>, volume: Int): Collection<Asset> {
 
         // Try and find a solution that exactly matches the exact volume or the closest one
         // This is an interpretation of the problem since we don't know if an asset can be activated partially or not
@@ -37,8 +36,8 @@ class RecursiveActivationService(private val assetRepository: AssetRepository) :
 
         // Try sub solutions expecting a better one
         for (i in 1..volume / 2) {
-            val firstHalf = filter(assets, i)
-            val secondHalf = filter(assets - firstHalf.toSet(), volume - i)
+            val firstHalf = findSolution(assets, volume - i)
+            val secondHalf = findSolution(assets - firstHalf.toSet(), i)
             if (firstHalf.isNotEmpty() && secondHalf.isNotEmpty()) {
                 val newSolution = firstHalf + secondHalf
                 if (solution.isEmpty() || newSolution.sumOf { asset: Asset -> asset.activationCost } < solution.sumOf { asset: Asset -> asset.activationCost }) {
