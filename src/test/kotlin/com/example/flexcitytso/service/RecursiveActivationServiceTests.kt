@@ -14,7 +14,7 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 
 @SpringBootTest
-class ActivationServiceTests(@Autowired private val activationService: ActivationService) {
+class RecursiveActivationServiceTests(@Autowired private val activationService: RecursiveActivationService) {
 
     @MockitoBean
     lateinit var assetRepository: AssetRepository
