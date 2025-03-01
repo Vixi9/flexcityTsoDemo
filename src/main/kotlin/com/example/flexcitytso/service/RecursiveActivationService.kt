@@ -21,7 +21,7 @@ class RecursiveActivationService(private val assetRepository: AssetRepository) :
 
     /**
      * Find the best solution for the given volume
-     * This might be terrible in terms of performance
+     * This might be terrible in terms of performance since we don't store or memoize sub solutions
      * @param assets the assets to search in
      * @param volume the desired volume of assets to activate
      */
