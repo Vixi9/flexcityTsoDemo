@@ -6,15 +6,13 @@ import com.example.flexcitytso.exception.InsufficientAssetsException
 import com.example.flexcitytso.model.Asset
 import com.example.flexcitytso.repository.AssetRepository
 import org.springframework.stereotype.Service
-import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Service("recursiveActivationService")
 class RecursiveActivationService(private val assetRepository: AssetRepository) : ActivationService {
 
     override fun activate(date: LocalDate, volume: Int): ActivationRequestDto {
-        val dayOfWeek: ArrayList<DayOfWeek> = arrayListOf(date.dayOfWeek)
-        val dayFilteredAssets = assetRepository.findAssetByAvailabilitiesContaining(dayOfWeek)
+        val dayFilteredAssets = assetRepository.findAssetByAvailabilitiesContaining(listOf(date.dayOfWeek))
         val solution = tryAndFindSolution(dayFilteredAssets, volume)
         if (solution.isEmpty()) throw InsufficientAssetsException() else return solution.toDto()
     }
